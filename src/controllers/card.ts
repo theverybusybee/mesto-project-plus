@@ -1,3 +1,4 @@
+import { Error } from 'mongoose';
 import { Request, Response } from 'express';
 import Card from '../models/card';
 import {
@@ -9,6 +10,7 @@ import {
 
 export const getCards = (req: Request, res: Response) => {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
     .catch(() =>
       res
@@ -46,11 +48,14 @@ export const deleteCard = (req: Request, res: Response) => {
         res.status(NOT_FOUND).send({ message: `Нет карточки с id: ${cardId}` });
       }
     })
-    .catch(() =>
+    .catch((err) => {
+      if (err instanceof Error.CastError) {
+        return res.send({ message: `Карточка с _id: ${cardId} не существует` });
+      }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` })
-    );
+        .send({ message: `Внутренняя ошибка сервера` });
+    });
 };
 
 export const setLike = (req: Request, res: Response) => {
@@ -62,6 +67,7 @@ export const setLike = (req: Request, res: Response) => {
     { $addToSet: { likes: userId } },
     { new: true }
   )
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         res.status(NOT_FOUND).send({ message: `Нет карточки с id: ${cardId}` });
@@ -69,11 +75,14 @@ export const setLike = (req: Request, res: Response) => {
       }
       res.send({ data: card });
     })
-    .catch(() =>
+    .catch((err) => {
+      if (err instanceof Error.CastError) {
+        return res.send({ message: `Карточка с _id: ${cardId} не существует` });
+      }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` })
-    );
+        .send({ message: `Внутренняя ошибка сервера` });
+    });
 };
 
 export const removeLike = (req: Request, res: Response) => {
@@ -92,9 +101,12 @@ export const removeLike = (req: Request, res: Response) => {
       }
       res.send({ data: card });
     })
-    .catch(() =>
+    .catch((err) => {
+      if (err instanceof Error.CastError) {
+        return res.send({ message: `Карточка с _id: ${cardId} не существует` });
+      }
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` })
-    );
+        .send({ message: `Внутренняя ошибка сервера` });
+    });
 };

@@ -22,6 +22,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
+app.use((req: Request, res: Response) => {
+  res.status(404).send('Page is not found');
+});
 
 app.listen(PORT, () => {
   console.log('Ссылка на сервер');

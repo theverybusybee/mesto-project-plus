@@ -6,6 +6,7 @@ import {
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
 } from '../constants/responseStatusCodes';
+import { Error } from 'mongoose';
 
 export const createUser = (req: Request, res: Response) => {
   const { name, about, avatar } = req.body;
@@ -47,7 +48,12 @@ export const getUserById = (req: Request, res: Response) => {
       res.send({ data: user });
     })
 
-    .catch(() => {
+    .catch((err) => {
+      if (err instanceof Error.CastError) {
+        return res.send({
+          message: `Пользователя с _id: ${userId} не существует`,
+        });
+      }
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `Внутренняя ошибка сервера` });
