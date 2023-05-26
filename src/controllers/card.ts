@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Card from "../models/card";
 import {
   BAD_REQUEST,
+  CREATED,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
 } from "../constants/responseStatusCodes";
@@ -10,7 +11,9 @@ export const getCards = (req: Request, res: Response) => {
   return Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch((err) =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` })
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: `Внутренняя ошибка сервера` })
     );
 };
 
@@ -20,12 +23,14 @@ export const createCard = (req: Request, res: Response) => {
   const ownerId = req.user._id;
 
   return Card.create({ name, link, owner: ownerId })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: `${err.message}` });
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` });
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: `Внутренняя ошибка сервера` });
       }
     });
 };
@@ -42,7 +47,9 @@ export const deleteCard = (req: Request, res: Response) => {
       }
     })
     .catch((err) =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` })
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: `Внутренняя ошибка сервера` })
     );
 };
 
@@ -63,7 +70,9 @@ export const setLike = (req: Request, res: Response) => {
       res.send({ data: card });
     })
     .catch((err) =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` })
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: `Внутренняя ошибка сервера` })
     );
 };
 
@@ -84,6 +93,8 @@ export const removeLike = (req: Request, res: Response) => {
       res.send({ data: card });
     })
     .catch((err) =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` })
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: `Внутренняя ошибка сервера` })
     );
 };

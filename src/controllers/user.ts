@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
 import {
   BAD_REQUEST,
+  CREATED,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
 } from "../constants/responseStatusCodes";
@@ -10,22 +11,21 @@ export const createUser = (req: Request, res: Response) => {
   const { name, about, avatar } = req.body;
 
   return User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: `${err.message}` });
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` });
+        res.status(INTERNAL_SERVER_ERROR).send({ message: `Внутренняя ошибка сервера` });
       }
     });
 };
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
-
   return User.find({})
     .then((user) => res.send({ data: user }))
     .catch((err) =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` })
+      res.status(INTERNAL_SERVER_ERROR).send({ message: `Внутренняя ошибка сервера` })
     );
 };
 
@@ -44,7 +44,7 @@ export const getUserById = (req: Request, res: Response) => {
     })
 
     .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `${err.message}` });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: `Внутренняя ошибка сервера` });
     });
 };
 
