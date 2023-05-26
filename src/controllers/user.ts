@@ -16,7 +16,9 @@ export const createUser = (req: Request, res: Response) => {
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: `${err.message}` });
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: `Внутренняя ошибка сервера` });
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: `Внутренняя ошибка сервера` });
       }
     });
 };
@@ -25,7 +27,9 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   return User.find({})
     .then((user) => res.send({ data: user }))
     .catch((err) =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `Внутренняя ошибка сервера` })
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: `Внутренняя ошибка сервера` })
     );
 };
 
@@ -44,7 +48,9 @@ export const getUserById = (req: Request, res: Response) => {
     })
 
     .catch((err) => {
-      res.status(INTERNAL_SERVER_ERROR).send({ message: `Внутренняя ошибка сервера` });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: `Внутренняя ошибка сервера` });
     });
 };
 
@@ -53,13 +59,21 @@ export const updateProfile = (req: Request, res: Response) => {
 
   const userId = req.user._id;
 
-  return User.findByIdAndUpdate(userId, { name, about })
+  return User.findByIdAndUpdate(
+    userId,
+    { name, about },
+    { new: true, runValidators: true }
+  )
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res
-        .status(err.status || BAD_REQUEST)
-        .send({ message: `${err.message || err}` })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: `${err.message}` });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: `Внутренняя ошибка сервера` });
+      }
+    });
 };
 
 export const updateAvatar = (req: Request, res: Response) => {
@@ -67,11 +81,19 @@ export const updateAvatar = (req: Request, res: Response) => {
 
   const userId = req.user._id;
 
-  return User.findByIdAndUpdate(userId, { avatar })
+  return User.findByIdAndUpdate(
+    userId,
+    { avatar },
+    { new: true, runValidators: true }
+  )
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res
-        .status(err.status || BAD_REQUEST)
-        .send({ message: `${err.message || err}` })
-    );
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: `${err.message}` });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: `Внутренняя ошибка сервера` });
+      }
+    });
 };
