@@ -12,19 +12,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.user = {
-    _id: '6452d4391df55bbb17ff9961',
+    _id: "6452d4391df55bbb17ff9961",
   };
-
 
   next();
 });
 
 mongoose.connect("mongodb://localhost:27017/mestodb");
 
-app.use(usersRouter);
-app.use(cardsRouter);
+app.use("/users", usersRouter);
+app.use("/cards", cardsRouter);
 
-app.use(express.static(path.join(__dirname, "public")));
 app.listen(PORT, () => {
   console.log("Ссылка на сервер");
   console.log(BASE_PATH);

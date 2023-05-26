@@ -1,12 +1,18 @@
-import { getUsers, createUser, getUserById, updateProfile, updateAvatar } from "../controllers/user";
-const router = require('express').Router();
+import {
+  getUsers,
+  createUser,
+  getUserById,
+  updateProfile,
+  updateAvatar,
+} from "../controllers/user";
+const router = require("express").Router();
 
-router.get("/users", getUsers);
-router.get("/users/:userId", getUserById);
+router.get("/", getUsers);
+router.get("/:userId", getUserById);
 
-router.post("/users", createUser);
+router.post(createUser);
 
-router.patch("/users/me", updateProfile);
-router.patch("/users/me/avatar", updateAvatar);
+router.patch("/me", updateProfile);
+router.patch("/me/avatar", updateAvatar);
 
 export default router;
