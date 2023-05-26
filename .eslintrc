@@ -19,7 +19,6 @@
     "import/extensions": [".js", ".ts"]
   },
   "rules": {
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
     "import/extensions": [
       "error",
       "ignorePackages",
