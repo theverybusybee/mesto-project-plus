@@ -1,16 +1,16 @@
-import { Request, Response } from "express";
-import Card from "../models/card";
+import { Request, Response } from 'express';
+import Card from '../models/card';
 import {
   BAD_REQUEST,
   CREATED,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
-} from "../constants/responseStatusCodes";
+} from '../constants/responseStatusCodes';
 
 export const getCards = (req: Request, res: Response) => {
-  return Card.find({})
+  Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) =>
+    .catch(() =>
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `Внутренняя ошибка сервера` })
@@ -25,12 +25,12 @@ export const createCard = (req: Request, res: Response) => {
   return Card.create({ name, link, owner: ownerId })
     .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `${err.message}` });
       } else {
         res
           .status(INTERNAL_SERVER_ERROR)
-          .send({ message: `Внутренняя ошибка сервера` });
+          .send({ message: 'Внутренняя ошибка сервера' });
       }
     });
 };
@@ -46,7 +46,7 @@ export const deleteCard = (req: Request, res: Response) => {
         res.status(NOT_FOUND).send({ message: `Нет карточки с id: ${cardId}` });
       }
     })
-    .catch((err) =>
+    .catch(() =>
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `Внутренняя ошибка сервера` })
@@ -69,7 +69,7 @@ export const setLike = (req: Request, res: Response) => {
       }
       res.send({ data: card });
     })
-    .catch((err) =>
+    .catch(() =>
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `Внутренняя ошибка сервера` })
@@ -92,7 +92,7 @@ export const removeLike = (req: Request, res: Response) => {
       }
       res.send({ data: card });
     })
-    .catch((err) =>
+    .catch(() =>
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `Внутренняя ошибка сервера` })

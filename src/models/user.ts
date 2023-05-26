@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { IUser } from '../types/user';
+
 const { Schema } = mongoose;
-import { IUser } from "types/user";
-const validator = require("validator");
+const validator = require('validator');
 
 const userSchema = new Schema<IUser>({
   name: {
@@ -25,4 +26,4 @@ const userSchema = new Schema<IUser>({
   },
 });
 
-export default mongoose.model<IUser>("user", userSchema);
+export default mongoose.model<IUser>('user', userSchema);

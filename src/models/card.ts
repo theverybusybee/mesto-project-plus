@@ -1,6 +1,7 @@
-import { ObjectId } from "mongodb";
-import mongoose, { Schema, Types } from "mongoose";
-import { ICard } from "../types/card";
+import mongoose, { Schema, Types } from 'mongoose';
+
+import { ICard } from '../types/card';
+
 const validator = require('validator');
 
 const cardSchema = new Schema<ICard>({
@@ -32,4 +33,4 @@ const cardSchema = new Schema<ICard>({
   },
 });
 
-export default mongoose.model<ICard>("card", cardSchema);
+export default mongoose.model<ICard>('card', cardSchema);

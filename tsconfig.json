@@ -18,9 +18,8 @@
     "strict": true /* Enable all strict type-checking options. */,
     /* Completeness */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "typeRoots" : ["./src/types", "./node_modules/@types"]
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"],
-  "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+  "exclude": ["node_modules"]
 }
