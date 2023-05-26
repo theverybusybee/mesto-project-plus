@@ -1,8 +1,6 @@
-import path from 'path';
 import express, { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
-import usersRouter from './routes/users';
-import cardsRouter from './routes/cards';
+import rootRouter from './routes/index';
 
 const { PORT = 3000, BASE_PATH } = process.env;
 const app = express();
@@ -20,11 +18,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('/users', usersRouter);
-app.use('/cards', cardsRouter);
-app.use((req: Request, res: Response) => {
-  res.status(404).send('Page is not found');
-});
+app.use(rootRouter);
 
 app.listen(PORT, () => {
   console.log('Ссылка на сервер');
