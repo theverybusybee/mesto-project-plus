@@ -1,4 +1,4 @@
-import { Error } from 'mongoose';
+import mongoose, { Error } from 'mongoose';
 import { Request, Response } from 'express';
 import Card from '../models/card';
 import {
@@ -45,12 +45,12 @@ export const deleteCard = (req: Request, res: Response) => {
       if (card) {
         res.send({ data: card });
       } else {
-        res.status(NOT_FOUND).send({ message: `Нет карточки с id: ${cardId}` });
+        res.status(NOT_FOUND).send({ message: `Карточка с _id: ${cardId} не существует` });
       }
     })
     .catch((err) => {
       if (err instanceof Error.CastError) {
-        return res.send({ message: `Карточка с _id: ${cardId} не существует` });
+        return res.status(BAD_REQUEST).send({ message: `_id карточки невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)
@@ -76,8 +76,8 @@ export const setLike = (req: Request, res: Response) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.send({ message: `Карточка с _id: ${cardId} не существует` });
+       if (err instanceof Error.CastError) {
+        return res.status(BAD_REQUEST).send({ message: `_id карточки невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)
@@ -102,8 +102,8 @@ export const removeLike = (req: Request, res: Response) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.send({ message: `Карточка с _id: ${cardId} не существует` });
+       if (err instanceof Error.CastError) {
+        return res.status(BAD_REQUEST).send({ message: `_id карточки невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)

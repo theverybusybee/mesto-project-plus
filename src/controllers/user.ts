@@ -49,10 +49,8 @@ export const getUserById = (req: Request, res: Response) => {
     })
 
     .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.send({
-          message: `Пользователя с _id: ${userId} не существует`,
-        });
+       if (err instanceof Error.CastError) {
+        return res.status(BAD_REQUEST).send({ message: `_id пользователя невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)
