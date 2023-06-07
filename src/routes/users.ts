@@ -4,6 +4,7 @@ import {
   getUserById,
   updateProfile,
   updateAvatar,
+  login,
 } from '../controllers/user';
 
 const router = require('express').Router();
@@ -11,7 +12,8 @@ const router = require('express').Router();
 router.get('/', getUsers);
 router.get('/:userId', getUserById);
 
-router.post(createUser);
+router.post('/signin', login);
+router.post('/signup', createUser);
 
 router.patch('/me', updateProfile);
 router.patch('/me/avatar', updateAvatar);
