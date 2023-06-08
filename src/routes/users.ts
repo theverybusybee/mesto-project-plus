@@ -6,11 +6,14 @@ import {
   updateAvatar,
   login,
 } from '../controllers/user';
+import auth from '../middlewares/auth';
 
 const router = require('express').Router();
 
 router.get('/', getUsers);
 router.get('/:userId', getUserById);
+
+router.use(auth);
 
 router.post('/signin', login);
 router.post('/signup', createUser);

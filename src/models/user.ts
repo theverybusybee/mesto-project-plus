@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 import { IUser } from '../types/user';
+import {
+  DEFAULT_ABOUT,
+  DEFAULT_AVATAR,
+  DEFAULT_USERNAME,
+} from 'constants/dafault-data';
 
 const { Schema } = mongoose;
 const validator = require('validator');
@@ -10,14 +15,14 @@ const userSchema = new Schema<IUser>({
     required: true,
     minLength: 2,
     maxLength: 30,
-    default: 'theverybusybee',
+    default: DEFAULT_USERNAME,
   },
   about: {
     type: String,
     required: true,
     minLength: 2,
     maxLength: 30,
-    default: 'explorer of flowers',
+    default: DEFAULT_ABOUT,
   },
   avatar: {
     type: String,
@@ -25,8 +30,7 @@ const userSchema = new Schema<IUser>({
     validate: {
       validator: (value: string) => validator.isURL(value),
     },
-    default:
-      'https://i.pinimg.com/750x/42/f4/d9/42f4d9a60b8e4afd57c8ed83f1808ea7.jpg',
+    default: DEFAULT_AVATAR,
   },
   email: {
     type: String,
