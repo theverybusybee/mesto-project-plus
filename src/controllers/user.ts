@@ -2,18 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/user';
 import {
-  BAD_REQUEST,
   CREATED,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-  OK,
-  UNAUTHORIZED,
 } from '../constants/responseStatusCodes';
 import { Error } from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { SECRET_KEY } from '../constants/default-data';
+import { BadRequestError, NotFoundError, UnauthorizedError } from 'errors';
 
-export const createUser = (req: Request, res: Response) => {
+export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about, avatar, email, password } = req.body;
   return bcrypt.hash(password, 10).then((hash: string) =>
     User.create({ name, about, avatar, email, password: hash })
@@ -25,12 +20,9 @@ export const createUser = (req: Request, res: Response) => {
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          res.status(BAD_REQUEST).send({ message: `${err.message}` });
-        } else {
-          res
-            .status(INTERNAL_SERVER_ERROR)
-            .send({ message: `Внутренняя ошибка сервера` });
+          next(new BadRequestError(err.message));
         }
+        next(err);
       })
   );
 };
@@ -42,54 +34,47 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     .then((user) => {
       res.send({
         token: jwt.sign({ _id: user._id }, 'super-strong-secret', {
-        expiresIn: '7d',
-      }),
+          expiresIn: '7d',
+        }),
       });
     })
-    .catch(() =>
-      res
-        .status(UNAUTHORIZED)
-        .send({ message: 'Неправильные почта или пароль' })
-    );
+    .catch(() => next(new UnauthorizedError('Неправильные почта или пароль')));
 };
 
-export const getUsers = (req: Request, res: Response) => {
+export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` })
-    );
+    .catch(next);
 };
 
-export const getCurrentUser = (req: Request, res: Response) => {
+export const getCurrentUser = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = req.user;
 
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Нет пользователя с id: ${userId}` });
-        return;
+        throw new NotFoundError(`Нет пользователя с id: ${userId}`);
       }
       res.send(user);
     })
 
     .catch((err) => {
       if (err instanceof Error.CastError) {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: `_id пользователя невалидный` });
+        next(new BadRequestError('_id пользователя невалидный'));
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` });
+      next(err);
     });
 };
 
-export const updateProfile = (req: Request, res: Response) => {
+export const updateProfile = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, about } = req.body;
 
   const userId = req.user._id;
@@ -102,16 +87,17 @@ export const updateProfile = (req: Request, res: Response) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `${err.message}` });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: `Внутренняя ошибка сервера` });
+        next(new BadRequestError(err.message));
       }
+      next();
     });
 };
 
-export const updateAvatar = (req: Request, res: Response) => {
+export const updateAvatar = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { avatar } = req.body;
 
   const userId = req.user._id;
@@ -120,11 +106,8 @@ export const updateAvatar = (req: Request, res: Response) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `${err.message}` });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: `Внутренняя ошибка сервера` });
+        next(new BadRequestError(err.message));
       }
+      next(err);
     });
 };

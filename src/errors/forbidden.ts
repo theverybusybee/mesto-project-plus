@@ -1,6 +1,6 @@
 import { FORBIDDEN } from 'constants/responseStatusCodes';
 
-class ForbiddenError extends Error {
+export default class ForbiddenError extends Error {
   statusCode: number;
 
   constructor(message: string) {
@@ -8,5 +8,3 @@ class ForbiddenError extends Error {
     this.statusCode = FORBIDDEN;
   }
 }
-
-module.exports = ForbiddenError;

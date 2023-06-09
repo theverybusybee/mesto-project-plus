@@ -1,6 +1,6 @@
 import { BAD_REQUEST } from 'constants/responseStatusCodes';
 
-class BadRequestError extends Error {
+export default class BadRequestError extends Error {
   statusCode: number;
 
   constructor(message: string) {
@@ -8,5 +8,3 @@ class BadRequestError extends Error {
     this.statusCode = BAD_REQUEST;
   }
 }
-
-module.exports = BadRequestError;

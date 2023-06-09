@@ -1,6 +1,6 @@
 import { UNAUTHORIZED } from 'constants/responseStatusCodes';
 
-class UnauthorizedError extends Error {
+export default class UnauthorizedError extends Error {
   statusCode: number;
 
   constructor(message: string) {
@@ -8,5 +8,3 @@ class UnauthorizedError extends Error {
     this.statusCode = UNAUTHORIZED;
   }
 }
-
-module.exports = UnauthorizedError;

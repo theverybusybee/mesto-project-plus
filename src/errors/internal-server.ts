@@ -1,6 +1,6 @@
 import { INTERNAL_SERVER_ERROR } from 'constants/responseStatusCodes';
 
-class InternalServerError extends Error {
+export default class InternalServerError extends Error {
   statusCode: number;
 
   constructor(message: string) {
@@ -8,5 +8,3 @@ class InternalServerError extends Error {
     this.statusCode = INTERNAL_SERVER_ERROR;
   }
 }
-
-module.exports = InternalServerError;

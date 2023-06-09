@@ -1,5 +1,5 @@
 import mongoose, { Error } from 'mongoose';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import Card from '../models/card';
 import {
   BAD_REQUEST,
@@ -9,18 +9,25 @@ import {
   NOT_FOUND,
   OK,
 } from '../constants/responseStatusCodes';
+import {
+  BadRequestError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+} from 'errors';
 
-export const getCards = (req: Request, res: Response) => {
+export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` })
-    );
+    .then((cards) => {
+      if (!cards) {
+        throw new InternalServerError('На сервере произошла ошибка.');
+      }
+      res.status(OK).send({ data: cards });
+    })
+    .catch(next);
 };
 
-export const createCard = (req: Request, res: Response) => {
+export const createCard = (req: Request, res: Response, next: NextFunction) => {
   const { name, link } = req.body;
 
   const userId = req.user._id;
@@ -29,16 +36,13 @@ export const createCard = (req: Request, res: Response) => {
     .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: `${err.message}` });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: 'Внутренняя ошибка сервера' });
+        next(new BadRequestError(err.message));
       }
+      next(err);
     });
 };
 
-export const deleteCard = (req: Request, res: Response) => {
+export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
@@ -46,34 +50,20 @@ export const deleteCard = (req: Request, res: Response) => {
     .then((card) => {
       const ownerId = String(card?.owner);
       if (userId !== ownerId) {
-        res.status(FORBIDDEN).send({ message: `Доступ к карточке запрещен` });
-        return;
+        throw new ForbiddenError('Доступ к карточке запрещен');
       }
       return Card.deleteOne({ _id: card?._id });
     })
     .then(() => res.status(OK).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err instanceof Error.CastError) {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: `_id карточки невалидный` });
+        next(new BadRequestError('_id карточки невалидный'));
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` });
+      next(err);
     });
-  // return Card.findByIdAndDelete({ _id: cardId }).then((card) => {
-  //   if (card) {
-  //     res.send({ data: card });
-  //   } else {
-  //     res
-  //       .status(NOT_FOUND)
-  //       .send({ message: `Карточка с _id: ${cardId} не существует` });
-  //   }
-  // });
 };
 
-export const setLike = (req: Request, res: Response) => {
+export const setLike = (req: Request, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
@@ -85,24 +75,19 @@ export const setLike = (req: Request, res: Response) => {
     .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND).send({ message: `Нет карточки с id: ${cardId}` });
-        return;
+        throw new NotFoundError(`Нет карточки с id: ${cardId}`);
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err instanceof Error.CastError) {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: `_id карточки невалидный` });
+        next(new BadRequestError('_id карточки невалидный'));
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` });
+      next(err);
     });
 };
 
-export const removeLike = (req: Request, res: Response) => {
+export const removeLike = (req: Request, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
@@ -113,19 +98,14 @@ export const removeLike = (req: Request, res: Response) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(NOT_FOUND).send({ message: `Нет карточки с id: ${cardId}` });
-        return;
+        throw new NotFoundError(`Нет карточки с id: ${cardId}`);
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err instanceof Error.CastError) {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: `_id карточки невалидный` });
+        next(new BadRequestError('_id карточки невалидный'));
       }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: `Внутренняя ошибка сервера` });
+      next(err);
     });
 };
