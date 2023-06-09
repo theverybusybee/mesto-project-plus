@@ -1,23 +1,21 @@
+// import auth from '../middlewares/auth'
 import {
   getUsers,
   createUser,
-  getUserById,
+  getCurrentUser,
   updateProfile,
   updateAvatar,
   login,
 } from '../controllers/user';
-import auth from '../middlewares/auth';
 
 const router = require('express').Router();
 
 router.get('/', getUsers);
-router.get('/:userId', getUserById);
 
-router.use(auth);
+// router.post('/signup', createUser);
+// router.post('/signin', login);
 
-router.post('/signin', login);
-router.post('/signup', createUser);
-
+router.get('/me', getCurrentUser);
 router.patch('/me', updateProfile);
 router.patch('/me/avatar', updateAvatar);
 

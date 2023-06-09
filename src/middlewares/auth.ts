@@ -1,23 +1,33 @@
-import { SECRET_KEY } from 'constants/dafault-data';
-import { UNAUTHORIZED } from 'constants/responseStatusCodes';
-import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import { UNAUTHORIZED } from '../constants/responseStatusCodes';
+import { Request, Response, NextFunction } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-export default (req: Request, res: Response, next: NextFunction) => {
+interface SessionRequest extends Request {
+  user?: string | JwtPayload;
+}
+
+const handleAuthError = (res: Response) => {
+  res.status(UNAUTHORIZED).send({ message: 'Необходима авторизация' });
+};
+
+const extractBearerToken = (header: string) => {
+  return header.replace('Bearer ', '');
+};
+
+export default (req: SessionRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.status(UNAUTHORIZED).send({ message: 'Необходима авторизация' });
+    return handleAuthError(res);
   }
 
-  const token = authorization.replace('Bearer ', '');
-
+  const token = extractBearerToken(authorization);
   let payload;
 
   try {
-    payload = jwt.verify(token, SECRET_KEY);
+    payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
-    return res.status(UNAUTHORIZED).send({ message: 'Необходима авторизация' });
+    return handleAuthError(res);
   }
 
   req.user = payload;

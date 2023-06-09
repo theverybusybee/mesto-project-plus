@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint src/**/*.ts",
-    "start": "ts-node-dev src/app.ts",
+    "start": "DEBUG=express:* ts-node-dev src/app.ts",
     "build": "tsc --build",
     "dev": "ts-node-dev --respawn src/app.ts"
   },

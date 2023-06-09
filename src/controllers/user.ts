@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/user';
 import {
@@ -6,10 +6,12 @@ import {
   CREATED,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  OK,
   UNAUTHORIZED,
 } from '../constants/responseStatusCodes';
 import { Error } from 'mongoose';
 import jwt from 'jsonwebtoken';
+import { SECRET_KEY } from '../constants/default-data';
 
 export const createUser = (req: Request, res: Response) => {
   const { name, about, avatar, email, password } = req.body;
@@ -33,34 +35,15 @@ export const createUser = (req: Request, res: Response) => {
   );
 };
 
-export const login = (req: Request, res: Response) => {
+export const login = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
-  return User.findOne({ email })
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Учетная запись с таким email не найдена` });
-        return;
-      }
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          res
-            .status(NOT_FOUND)
-            .send({ message: 'Неправильные почта или пароль' });
-          return;
-        }
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-          expiresIn: '7d',
-        });
-        res.send({ token });
-        res
-          .cookie('jwt', token, {
-            maxAge: 3600 * 24 * 7,
-            httpOnly: true,
-          })
-          .end();
+      res.send({
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', {
+        expiresIn: '7d',
+      }),
       });
     })
     .catch(() =>
@@ -80,8 +63,8 @@ export const getUsers = (req: Request, res: Response) => {
     );
 };
 
-export const getUserById = (req: Request, res: Response) => {
-  const userId = req.user._id;
+export const getCurrentUser = (req: Request, res: Response) => {
+  const userId = req.user;
 
   User.findById(userId)
     .then((user) => {
@@ -91,7 +74,7 @@ export const getUserById = (req: Request, res: Response) => {
           .send({ message: `Нет пользователя с id: ${userId}` });
         return;
       }
-      res.send({ data: user });
+      res.send(user);
     })
 
     .catch((err) => {
