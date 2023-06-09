@@ -6,13 +6,14 @@ import {
   setLike,
   removeLike,
 } from '../controllers/card';
+import auth from '../middlewares/auth';
 
 const router = Router();
 
 router.get('/', getCards);
 
+router.use(auth);
 router.post('/', createCard);
-
 router.delete('/:cardId', deleteCard);
 
 router.put('/:cardId/likes', setLike);

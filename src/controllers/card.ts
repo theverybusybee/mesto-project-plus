@@ -4,13 +4,14 @@ import Card from '../models/card';
 import {
   BAD_REQUEST,
   CREATED,
+  FORBIDDEN,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  OK,
 } from '../constants/responseStatusCodes';
 
 export const getCards = (req: Request, res: Response) => {
   Card.find({})
-    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
     .catch(() =>
       res
@@ -22,9 +23,9 @@ export const getCards = (req: Request, res: Response) => {
 export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
 
-  const ownerId = req.user._id;
+  const userId = req.user._id;
 
-  return Card.create({ name, link, owner: ownerId })
+  return Card.create({ name, link, owner: userId })
     .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -39,23 +40,37 @@ export const createCard = (req: Request, res: Response) => {
 
 export const deleteCard = (req: Request, res: Response) => {
   const { cardId } = req.params;
+  const userId = req.user._id;
 
-  return Card.findByIdAndDelete({ _id: cardId })
+  return Card.findOne({ _id: cardId })
     .then((card) => {
-      if (card) {
-        res.send({ data: card });
-      } else {
-        res.status(NOT_FOUND).send({ message: `Карточка с _id: ${cardId} не существует` });
+      const ownerId = String(card?.owner);
+      if (userId !== ownerId) {
+        res.status(FORBIDDEN).send({ message: `Доступ к карточке запрещен` });
+        return;
       }
+      return Card.deleteOne({ _id: card?._id });
     })
+    .then(() => res.status(OK).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST).send({ message: `_id карточки невалидный` });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: `_id карточки невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: `Внутренняя ошибка сервера` });
     });
+  // return Card.findByIdAndDelete({ _id: cardId }).then((card) => {
+  //   if (card) {
+  //     res.send({ data: card });
+  //   } else {
+  //     res
+  //       .status(NOT_FOUND)
+  //       .send({ message: `Карточка с _id: ${cardId} не существует` });
+  //   }
+  // });
 };
 
 export const setLike = (req: Request, res: Response) => {
@@ -76,8 +91,10 @@ export const setLike = (req: Request, res: Response) => {
       res.send({ data: card });
     })
     .catch((err) => {
-       if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST).send({ message: `_id карточки невалидный` });
+      if (err instanceof Error.CastError) {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: `_id карточки невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)
@@ -102,8 +119,10 @@ export const removeLike = (req: Request, res: Response) => {
       res.send({ data: card });
     })
     .catch((err) => {
-       if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST).send({ message: `_id карточки невалидный` });
+      if (err instanceof Error.CastError) {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: `_id карточки невалидный` });
       }
       res
         .status(INTERNAL_SERVER_ERROR)

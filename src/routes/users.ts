@@ -1,4 +1,4 @@
-// import auth from '../middlewares/auth'
+import auth from '../middlewares/auth';
 import {
   getUsers,
   createUser,
@@ -12,8 +12,10 @@ const router = require('express').Router();
 
 router.get('/', getUsers);
 
-// router.post('/signup', createUser);
-// router.post('/signin', login);
+router.post('/signup', createUser);
+router.post('/signin', login);
+
+router.use(auth);
 
 router.get('/me', getCurrentUser);
 router.patch('/me', updateProfile);
