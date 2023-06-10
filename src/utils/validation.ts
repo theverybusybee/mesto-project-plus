@@ -2,13 +2,6 @@ import { celebrate, Joi } from 'celebrate';
 import { BadRequestError } from './errors';
 const validator = require('validator');
 
-const urlValidator = (url: string) => {
-  if (validator.isUrl()(url, { require_protocol: true })) {
-    throw new BadRequestError('Введена невалидная ссылка');
-  }
-  return url;
-};
-
 const emailValidator = (email: string) => {
   if (!validator.isEmail(email)) {
     throw new BadRequestError('Введен невалидный email');
@@ -16,9 +9,14 @@ const emailValidator = (email: string) => {
   return email;
 };
 
+const checkIsUrlValid = Joi.string()
+  .regex(/https?:\/\/(www\.)?([-\w.:])+([-\w._~:/?#[\]@!$&'()*+,;=])*/i)
+  .required()
+  .label('URL');
+
 export const avatarValidator = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().custom(urlValidator),
+    avatar: checkIsUrlValid,
   }),
 });
 
@@ -33,7 +31,7 @@ export const signInValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    avatar: Joi.string().custom(urlValidator),
+    avatar: checkIsUrlValid,
   }),
 });
 
@@ -41,7 +39,7 @@ export const signUpValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().custom(urlValidator),
+    avatar: checkIsUrlValid,
     email: Joi.string().custom(emailValidator),
     password: Joi.string().required(),
   }),
@@ -50,7 +48,7 @@ export const signUpValidator = celebrate({
 export const createCardValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().custom(urlValidator),
+    link: checkIsUrlValid,
   }),
 });
 

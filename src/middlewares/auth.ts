@@ -1,6 +1,7 @@
 import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { SECRET_KEY } from '../utils/constants/default-data';
 
 interface SessionRequest extends Request {
   user?: string | JwtPayload;
@@ -25,7 +26,7 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(token, SECRET_KEY);
   } catch (err) {
     return handleAuthError(res);
   }

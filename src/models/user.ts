@@ -16,61 +16,68 @@ interface UserModel extends Model<IUser> {
   ) => Promise<Document<unknown, any, IUser>>;
 }
 
-const userSchema = new Schema<IUser, UserModel>({
-  name: {
-    type: String,
-    required: true,
-    minLength: 2,
-    maxLength: 30,
-    default: DEFAULT_USERNAME,
-  },
-  about: {
-    type: String,
-    required: true,
-    minLength: 2,
-    maxLength: 30,
-    default: DEFAULT_ABOUT,
-  },
-  avatar: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (value: string) => validator.isURL(value),
+const userSchema = new Schema<IUser, UserModel>(
+  {
+    name: {
+      type: String,
+      required: true,
+      minLength: 2,
+      maxLength: 30,
+      default: DEFAULT_USERNAME,
     },
-    default: DEFAULT_AVATAR,
-  },
-  email: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
+    about: {
+      type: String,
+      required: true,
+      minLength: 2,
+      maxLength: 30,
+      default: DEFAULT_ABOUT,
+    },
+    avatar: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (value: string) => validator.isURL(value),
+      },
+      default: DEFAULT_AVATAR,
+    },
+    email: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+      },
+    },
+    password: {
+      type: String,
+      required: true,
+      validate: {
+        validator: (value: string) => validator.isStrongPassword(value),
+      },
+      select: false,
     },
   },
-  password: {
-    type: String,
-    required: true,
-    validate: {
-      validator: (value: string) => validator.isStrongPassword(value),
-    },
-    select: false
-  },
-});
+  {
+    versionKey: false,
+  }
+);
 
 userSchema.static(
   'findUserByCredentials',
   function findUserByCredentials(email: string, password: string) {
-    return this.findOne({ email }).select('+password').then((user) => {
-      if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
-      }
-
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
+    return this.findOne({ email })
+      .select('+password')
+      .then((user) => {
+        if (!user) {
           return Promise.reject(new Error('Неправильные почта или пароль'));
         }
-        return user;
+
+        return bcrypt.compare(password, user.password).then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+          return user;
+        });
       });
-    });
   }
 );
 

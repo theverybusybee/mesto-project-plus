@@ -4,12 +4,14 @@ import usersRouter from './users';
 import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import { signInValidator, signUpValidator } from '../utils/validation';
 import { createUser, login } from '../controllers/auth';
+import auth from '../middlewares/auth';
 
 const rootRouter = require('express').Router();
 
 rootRouter.post('/signin', signInValidator, login);
 rootRouter.post('/signup', signUpValidator, createUser);
 
+rootRouter.use(auth);
 rootRouter.use('/cards', cardsRouter);
 rootRouter.use('/users', usersRouter);
 

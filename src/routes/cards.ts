@@ -12,8 +12,6 @@ import { cardIdValidator, createCardValidator } from '../utils/validation';
 const router = Router();
 
 router.get('/', getCards);
-
-router.use(auth);
 router.post('/', createCardValidator, createCard);
 router.delete('/:cardId', cardIdValidator, deleteCard);
 

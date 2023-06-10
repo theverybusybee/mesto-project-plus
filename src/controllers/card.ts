@@ -48,9 +48,7 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       }
       return Card.deleteOne({ _id: card?._id });
     })
-    .then(() =>
-      res.status(HttpStatus.Ok).send({ message: 'Карточка удалена' })
-    )
+    .then(() => res.status(HttpStatus.Ok).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       let customError = err;
       if (err instanceof Error.CastError) {
@@ -64,12 +62,11 @@ export const setLike = (req: Request, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  return Card.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
     { new: true }
   )
-    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw new NotFoundError(`Нет карточки с id: ${cardId}`);
@@ -89,11 +86,7 @@ export const removeLike = (req: Request, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  return Card.findByIdAndUpdate(
-    cardId,
-    { $pull: { likes: userId } },
-    { new: true }
-  )
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: userId } }, { new: true })
     .then((card) => {
       if (!card) {
         throw new NotFoundError(`Нет карточки с id: ${cardId}`);
