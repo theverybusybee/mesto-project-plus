@@ -1,14 +1,10 @@
-import auth from '../middlewares/auth';
 import {
   getUsers,
   getCurrentUser,
   updateProfile,
   updateAvatar,
 } from '../controllers/user';
-import {
-  avatarValidator,
-  userDataValidator,
-} from '../utils/validation';
+import { avatarValidator, userDataValidator } from '../utils/validation';
 
 const router = require('express').Router();
 

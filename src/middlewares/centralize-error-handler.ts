@@ -1,5 +1,5 @@
-import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import { NextFunction, Request, Response } from 'express';
+import { HttpStatus } from '../utils/constants/responseStatusCodes';
 
 export interface IError extends Error {
   statusCode: number;

@@ -1,6 +1,6 @@
-import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import { SECRET_KEY } from '../utils/constants/default-data';
 
 interface SessionRequest extends Request {
@@ -8,13 +8,12 @@ interface SessionRequest extends Request {
 }
 
 const handleAuthError = (res: Response) => {
-  res.status(HttpStatus.Unauthorized).send({ message: 'Необходима авторизация' });
+  res
+    .status(HttpStatus.Unauthorized)
+    .send({ message: 'Необходима авторизация' });
 };
 
-const extractBearerToken = (header: string) => {
-  return header.replace('Bearer ', '');
-};
-
+const extractBearerToken = (header: string) => header.replace('Bearer ', '');
 export default (req: SessionRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
@@ -33,5 +32,5 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
 
   req.user = payload;
 
-  next();
+  return next();
 };

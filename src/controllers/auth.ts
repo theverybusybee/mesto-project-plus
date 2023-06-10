@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import User from '../models/user';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import User from '../models/user';
 import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import ConflictError from '../utils/errors/conflict';
 import { BadRequestError, UnauthorizedError } from '../utils/errors';

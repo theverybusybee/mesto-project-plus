@@ -1,6 +1,6 @@
 import { model, Model, Schema, Document } from 'mongoose';
-import { IUser } from '../types/user';
 import bcrypt from 'bcryptjs';
+import { IUser } from '../types/user';
 import {
   DEFAULT_ABOUT,
   DEFAULT_AVATAR,
@@ -9,7 +9,7 @@ import {
 
 const validator = require('validator');
 
-interface UserModel extends Model<IUser> {
+export interface UserModel extends Model<IUser> {
   findUserByCredentials: (
     email: string,
     password: string

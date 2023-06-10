@@ -6,7 +6,6 @@ import {
   setLike,
   removeLike,
 } from '../controllers/card';
-import auth from '../middlewares/auth';
 import { cardIdValidator, createCardValidator } from '../utils/validation';
 
 const router = Router();

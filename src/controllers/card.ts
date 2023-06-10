@@ -1,5 +1,5 @@
-import mongoose, { Error } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
+import { Error } from 'mongoose';
 import Card from '../models/card';
 import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import {
@@ -96,7 +96,7 @@ export const removeLike = (req: Request, res: Response, next: NextFunction) => {
     .catch((err) => {
       let customError = err;
       if (err instanceof Error.CastError) {
-        err = new BadRequestError('_id карточки невалидный');
+        customError = new BadRequestError('_id карточки невалидный');
       }
       next(customError);
     });

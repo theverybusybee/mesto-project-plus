@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import User from '../models/user';
 import { Error } from 'mongoose';
+import User from '../models/user';
 import { BadRequestError, NotFoundError } from '../utils/errors';
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {

@@ -1,5 +1,6 @@
 import { celebrate, Joi } from 'celebrate';
 import { BadRequestError } from './errors';
+
 const validator = require('validator');
 
 const emailValidator = (email: string) => {

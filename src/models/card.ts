@@ -1,6 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
-const validator = require('validator');
+
 import { ICard } from '../types/card';
+
+const validator = require('validator');
 
 const cardSchema = new Schema<ICard>({
   name: {
