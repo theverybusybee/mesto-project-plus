@@ -1,4 +1,4 @@
-import { statusCodes } from 'constants/responseStatusCodes';
+import { statusCodes } from '../../utils/constants/responseStatusCodes';
 
 export default class NotFoundError extends Error {
   statusCode: number;

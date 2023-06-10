@@ -1,4 +1,4 @@
-import { statusCodes } from 'constants/responseStatusCodes';
+import { statusCodes } from '../utils/constants/responseStatusCodes';
 import { NextFunction, Request, Response } from 'express';
 
 export interface IError extends Error {

@@ -1,4 +1,4 @@
-import { statusCodes } from '../constants/responseStatusCodes';
+import { statusCodes } from '../utils/constants/responseStatusCodes';
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 

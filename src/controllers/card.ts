@@ -1,13 +1,13 @@
 import mongoose, { Error } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
 import Card from '../models/card';
-import { statusCodes } from '../constants/responseStatusCodes';
+import { statusCodes } from '../utils/constants/responseStatusCodes';
 import {
   BadRequestError,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
-} from 'errors';
+} from '../utils/errors';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})

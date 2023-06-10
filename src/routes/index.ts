@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import cardsRouter from './cards';
 import usersRouter from './users';
-import { statusCodes } from '../constants/responseStatusCodes';
+import { statusCodes } from '../utils/constants/responseStatusCodes';
 
 const rootRouter = require('express').Router();
 

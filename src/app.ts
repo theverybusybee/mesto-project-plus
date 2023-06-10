@@ -1,8 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
 import rootRouter from './routes/index';
 import { requestLogger, errorLogger } from './middlewares/loggers';
-import centralizedErrorHandler from 'middlewares/centralize-error-handler';
+import centralizedErrorHandler from './middlewares/centralize-error-handler';
 
 const { PORT = 3000, BASE_PATH } = process.env;
 const app = express();

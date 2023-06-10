@@ -1,11 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/user';
-import { statusCodes } from '../constants/responseStatusCodes';
+import { statusCodes } from '../utils/constants/responseStatusCodes';
 import { Error } from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { BadRequestError, NotFoundError, UnauthorizedError } from 'errors';
-import ConflictError from 'errors/conflict';
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from '../utils/errors';
+import ConflictError from '../utils/errors/conflict';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about, avatar, email, password } = req.body;

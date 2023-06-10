@@ -5,7 +5,7 @@ import {
   DEFAULT_ABOUT,
   DEFAULT_AVATAR,
   DEFAULT_USERNAME,
-} from '../constants/default-data';
+} from '../utils/constants/default-data';
 
 const validator = require('validator');
 

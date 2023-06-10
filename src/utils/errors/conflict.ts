@@ -1,4 +1,4 @@
-import { statusCodes } from 'constants/responseStatusCodes';
+import { statusCodes } from '../../utils/constants/responseStatusCodes';
 
 export default class ConflictError extends Error {
   statusCode: number;

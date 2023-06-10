@@ -7,8 +7,6 @@ const statusCodes = {
   NotFound: 404,
   Conflict: 409,
   InternalServerError: 500,
-}
-
-export {
-  statusCodes
 };
+
+export { statusCodes };
