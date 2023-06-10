@@ -1,17 +1,14 @@
-const OK = 200;
-const CREATED = 201;
-const BAD_REQUEST = 400;
-const UNAUTHORIZED = 401;
-const FORBIDDEN = 403;
-const NOT_FOUND = 404;
-const INTERNAL_SERVER_ERROR = 500;
+const statusCodes = {
+  Ok: 200,
+  Created: 201,
+  BadRequest: 400,
+  Unauthorized: 401,
+  Forbidden: 403,
+  NotFound: 404,
+  Conflict: 409,
+  InternalServerError: 500,
+}
 
 export {
-  OK,
-  CREATED,
-  BAD_REQUEST,
-  UNAUTHORIZED,
-  FORBIDDEN,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
+  statusCodes
 };

@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/user';
-import {
-  CREATED,
-} from '../constants/responseStatusCodes';
+import { statusCodes } from '../constants/responseStatusCodes';
 import { Error } from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { BadRequestError, NotFoundError, UnauthorizedError } from 'errors';
+import ConflictError from 'errors/conflict';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about, avatar, email, password } = req.body;
@@ -14,15 +13,21 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     User.create({ name, about, avatar, email, password: hash })
       .then((user) => {
         const { _id } = user;
-        res.status(CREATED).send({
+        res.status(statusCodes.Created).send({
           _id,
         });
       })
       .catch((err) => {
+        let customError = err;
         if (err.name === 'ValidationError') {
-          next(new BadRequestError(err.message));
+          customError = new BadRequestError(err.message);
         }
-        next(err);
+        if (err.code === 1100) {
+          customError = new ConflictError(
+            'Пользователь с таким email не существует'
+          );
+        }
+        next(customError);
       })
   );
 };
@@ -63,10 +68,11 @@ export const getCurrentUser = (
     })
 
     .catch((err) => {
+      let customError = err;
       if (err instanceof Error.CastError) {
-        next(new BadRequestError('_id пользователя невалидный'));
+        customError = new BadRequestError('_id пользователя невалидный');
       }
-      next(err);
+      next(customError);
     });
 };
 
@@ -86,10 +92,11 @@ export const updateProfile = (
   )
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      let customError = err;
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(err.message));
+        customError = new BadRequestError(err.message);
       }
-      next();
+      next(customError);
     });
 };
 
@@ -105,9 +112,10 @@ export const updateAvatar = (
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
+      let customError = err;
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(err.message));
+        customError = new BadRequestError(err.message);
       }
-      next(err);
+      next(customError);
     });
 };

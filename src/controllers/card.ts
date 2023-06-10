@@ -1,14 +1,7 @@
 import mongoose, { Error } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
 import Card from '../models/card';
-import {
-  BAD_REQUEST,
-  CREATED,
-  FORBIDDEN,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-  OK,
-} from '../constants/responseStatusCodes';
+import { statusCodes } from '../constants/responseStatusCodes';
 import {
   BadRequestError,
   ForbiddenError,
@@ -22,7 +15,7 @@ export const getCards = (req: Request, res: Response, next: NextFunction) => {
       if (!cards) {
         throw new InternalServerError('На сервере произошла ошибка.');
       }
-      res.status(OK).send({ data: cards });
+      res.status(statusCodes.Ok).send({ data: cards });
     })
     .catch(next);
 };
@@ -33,12 +26,13 @@ export const createCard = (req: Request, res: Response, next: NextFunction) => {
   const userId = req.user._id;
 
   return Card.create({ name, link, owner: userId })
-    .then((card) => res.status(CREATED).send({ data: card }))
+    .then((card) => res.status(statusCodes.Created).send({ data: card }))
     .catch((err) => {
+      let customError = err;
       if (err.name === 'ValidationError') {
-        next(new BadRequestError(err.message));
+        customError = new BadRequestError(err.message);
       }
-      next(err);
+      next(customError);
     });
 };
 
@@ -54,12 +48,15 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       }
       return Card.deleteOne({ _id: card?._id });
     })
-    .then(() => res.status(OK).send({ message: 'Карточка удалена' }))
+    .then(() =>
+      res.status(statusCodes.Ok).send({ message: 'Карточка удалена' })
+    )
     .catch((err) => {
+      let customError = err;
       if (err instanceof Error.CastError) {
-        next(new BadRequestError('_id карточки невалидный'));
+        customError = new BadRequestError('_id карточки невалидный');
       }
-      next(err);
+      next(customError);
     });
 };
 
@@ -80,10 +77,11 @@ export const setLike = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: card });
     })
     .catch((err) => {
+      let customError = err;
       if (err instanceof Error.CastError) {
-        next(new BadRequestError('_id карточки невалидный'));
+        customError = new BadRequestError('_id карточки невалидный');
       }
-      next(err);
+      next(customError);
     });
 };
 
@@ -103,9 +101,10 @@ export const removeLike = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: card });
     })
     .catch((err) => {
+      let customError = err;
       if (err instanceof Error.CastError) {
-        next(new BadRequestError('_id карточки невалидный'));
+        err = new BadRequestError('_id карточки невалидный');
       }
-      next(err);
+      next(customError);
     });
 };

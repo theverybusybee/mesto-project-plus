@@ -1,10 +1,10 @@
-import { INTERNAL_SERVER_ERROR } from 'constants/responseStatusCodes';
+import { statusCodes } from 'constants/responseStatusCodes';
 
 export default class InternalServerError extends Error {
   statusCode: number;
 
   constructor(message: string) {
     super(message);
-    this.statusCode = INTERNAL_SERVER_ERROR;
+    this.statusCode = statusCodes.InternalServerError;
   }
 }

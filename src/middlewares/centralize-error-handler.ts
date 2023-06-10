@@ -1,4 +1,4 @@
-import { INTERNAL_SERVER_ERROR } from 'constants/responseStatusCodes';
+import { statusCodes } from 'constants/responseStatusCodes';
 import { NextFunction, Request, Response } from 'express';
 
 export interface IError extends Error {
@@ -11,11 +11,11 @@ const centralizedErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  const { statusCode = INTERNAL_SERVER_ERROR, message } = err;
+  const { statusCode = statusCodes.InternalServerError, message } = err;
 
   res.status(statusCode).send({
     message:
-      statusCode === INTERNAL_SERVER_ERROR
+      statusCode === statusCodes.InternalServerError
         ? 'На сервере произошла ошибка'
         : message,
   });
