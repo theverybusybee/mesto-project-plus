@@ -1,4 +1,4 @@
-import { statusCodes } from '../utils/constants/responseStatusCodes';
+import { HttpStatus } from '../utils/constants/responseStatusCodes';
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -7,7 +7,7 @@ interface SessionRequest extends Request {
 }
 
 const handleAuthError = (res: Response) => {
-  res.status(statusCodes.Unauthorized).send({ message: 'Необходима авторизация' });
+  res.status(HttpStatus.Unauthorized).send({ message: 'Необходима авторизация' });
 };
 
 const extractBearerToken = (header: string) => {

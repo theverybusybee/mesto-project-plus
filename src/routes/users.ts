@@ -1,24 +1,22 @@
 import auth from '../middlewares/auth';
 import {
   getUsers,
-  createUser,
   getCurrentUser,
   updateProfile,
   updateAvatar,
-  login,
 } from '../controllers/user';
+import {
+  avatarValidator,
+  userDataValidator,
+} from '../utils/validation';
 
 const router = require('express').Router();
 
 router.get('/', getUsers);
 
-router.post('/signup', createUser);
-router.post('/signin', login);
-
 router.use(auth);
-
 router.get('/me', getCurrentUser);
-router.patch('/me', updateProfile);
-router.patch('/me/avatar', updateAvatar);
+router.patch('/me', userDataValidator, updateProfile);
+router.patch('/me/avatar', avatarValidator, updateAvatar);
 
 export default router;

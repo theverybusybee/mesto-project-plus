@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import { errors } from 'celebrate';
 import rootRouter from './routes/index';
 import { requestLogger, errorLogger } from './middlewares/loggers';
 import centralizedErrorHandler from './middlewares/centralize-error-handler';
@@ -17,6 +18,7 @@ app.use(requestLogger);
 app.use(rootRouter);
 
 app.use(errorLogger);
+app.use(errors());
 app.use(centralizedErrorHandler);
 
 app.listen(PORT, () => {

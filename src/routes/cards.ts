@@ -7,16 +7,17 @@ import {
   removeLike,
 } from '../controllers/card';
 import auth from '../middlewares/auth';
+import { cardIdValidator, createCardValidator } from '../utils/validation';
 
 const router = Router();
 
 router.get('/', getCards);
 
 router.use(auth);
-router.post('/', createCard);
-router.delete('/:cardId', deleteCard);
+router.post('/', createCardValidator, createCard);
+router.delete('/:cardId', cardIdValidator, deleteCard);
 
-router.put('/:cardId/likes', setLike);
-router.delete('/:cardId/likes', removeLike);
+router.put('/:cardId/likes', cardIdValidator, setLike);
+router.delete('/:cardId/likes', cardIdValidator, removeLike);
 
 export default router;
