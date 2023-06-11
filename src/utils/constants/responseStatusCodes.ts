@@ -1,12 +1,12 @@
 const HttpStatus = {
-  Ok: 200,
-  Created: 201,
-  BadRequest: 400,
-  Unauthorized: 401,
-  Forbidden: 403,
-  NotFound: 404,
-  Conflict: 409,
-  InternalServerError: 500,
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  INTERNAL_SERVER_ERROR: 500,
 };
 
 export { HttpStatus };

@@ -5,6 +5,6 @@ export default class ConflictError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = HttpStatus.Conflict;
+    this.statusCode = HttpStatus.CONFLICT;
   }
 }

@@ -5,6 +5,6 @@ export default class UnauthorizedError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = HttpStatus.Unauthorized;
+    this.statusCode = HttpStatus.UNAUTHORIZED;
   }
 }

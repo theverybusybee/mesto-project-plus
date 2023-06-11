@@ -11,11 +11,11 @@ const centralizedErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  const { statusCode = HttpStatus.InternalServerError, message } = err;
+  const { statusCode = HttpStatus.INTERNAL_SERVER_ERROR, message } = err;
 
   res.status(statusCode).send({
     message:
-      statusCode === HttpStatus.InternalServerError
+      statusCode === HttpStatus.INTERNAL_SERVER_ERROR
         ? 'На сервере произошла ошибка'
         : message,
   });

@@ -5,6 +5,6 @@ export default class BadRequestError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = HttpStatus.BadRequest;
+    this.statusCode = HttpStatus.BAD_REQUEST;
   }
 }

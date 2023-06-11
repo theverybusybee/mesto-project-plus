@@ -12,12 +12,11 @@ const emailValidator = (email: string) => {
 
 const checkIsUrlValid = Joi.string()
   .regex(/https?:\/\/(www\.)?([-\w.:])+([-\w._~:/?#[\]@!$&'()*+,;=])*/i)
-  .required()
   .label('URL');
 
 export const avatarValidator = celebrate({
   body: Joi.object().keys({
-    avatar: checkIsUrlValid,
+    avatar: checkIsUrlValid.required(),
   }),
 });
 
@@ -32,7 +31,6 @@ export const signInValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    avatar: checkIsUrlValid,
   }),
 });
 
@@ -49,7 +47,7 @@ export const signUpValidator = celebrate({
 export const createCardValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: checkIsUrlValid,
+    link: checkIsUrlValid.required(),
   }),
 });
 

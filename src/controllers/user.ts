@@ -1,11 +1,30 @@
 import { NextFunction, Request, Response } from 'express';
-import { Error } from 'mongoose';
 import User from '../models/user';
 import { BadRequestError, NotFoundError } from '../utils/errors';
+import Error from 'next/error';
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   User.find({})
     .then((user) => res.send({ data: user }))
+    .catch(next);
+};
+
+export const getUserById = (
+  req: Request,
+  res: Response,
+  err: Error,
+  next: NextFunction
+) => {
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(`Нет пользователя с id: ${userId}`);
+      }
+      res.send({ data: user });
+    })
+
     .catch(next);
 };
 
@@ -24,13 +43,7 @@ export const getCurrentUser = (
       res.send(user);
     })
 
-    .catch((err) => {
-      let customError = err;
-      if (err instanceof Error.CastError) {
-        customError = new BadRequestError('_id пользователя невалидный');
-      }
-      next(customError);
-    });
+    .catch(next);
 };
 
 export const updateProfile = (

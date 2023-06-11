@@ -5,6 +5,6 @@ export default class ForbiddenError extends Error {
 
   constructor(message: string) {
     super(message);
-    this.statusCode = HttpStatus.Forbidden;
+    this.statusCode = HttpStatus.FORBIDDEN;
   }
 }

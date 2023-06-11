@@ -16,7 +16,7 @@ rootRouter.use('/cards', cardsRouter);
 rootRouter.use('/users', usersRouter);
 
 rootRouter.use((req: Request, res: Response) => {
-  res.status(HttpStatus.NotFound).send('Page is not found');
+  res.status(HttpStatus.NOT_FOUND).send('Page is not found');
 });
 
 export default rootRouter;

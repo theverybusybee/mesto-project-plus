@@ -6,35 +6,33 @@ import {
   DEFAULT_AVATAR,
   DEFAULT_USERNAME,
 } from '../utils/constants/default-data';
+import { UnauthorizedError } from '../utils/errors';
 
 const validator = require('validator');
 
-export interface UserModel extends Model<IUser> {
+export interface userModel extends Model<IUser> {
   findUserByCredentials: (
     email: string,
     password: string
   ) => Promise<Document<unknown, any, IUser>>;
 }
 
-const userSchema = new Schema<IUser, UserModel>(
+const userSchema = new Schema<IUser, userModel>(
   {
     name: {
       type: String,
-      required: true,
       minLength: 2,
       maxLength: 30,
       default: DEFAULT_USERNAME,
     },
     about: {
       type: String,
-      required: true,
       minLength: 2,
       maxLength: 30,
       default: DEFAULT_ABOUT,
     },
     avatar: {
       type: String,
-      required: true,
       validate: {
         validator: (value: string) => validator.isURL(value),
       },
@@ -50,9 +48,6 @@ const userSchema = new Schema<IUser, UserModel>(
     password: {
       type: String,
       required: true,
-      validate: {
-        validator: (value: string) => validator.isStrongPassword(value),
-      },
       select: false,
     },
   },
@@ -68,12 +63,12 @@ userSchema.static(
       .select('+password')
       .then((user) => {
         if (!user) {
-          return Promise.reject(new Error('Неправильные почта или пароль'));
+          throw new UnauthorizedError('Неверные почта или пароль')
         }
 
         return bcrypt.compare(password, user.password).then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
+            throw new UnauthorizedError('Неверные почта или пароль')
           }
           return user;
         });
@@ -81,4 +76,4 @@ userSchema.static(
   }
 );
 
-export default model<IUser, UserModel>('User', userSchema);
+export default model<IUser, userModel>('User', userSchema);

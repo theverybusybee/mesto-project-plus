@@ -13,7 +13,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     User.create({ name, about, avatar, email, password: hash })
       .then((user) => {
         const { _id } = user;
-        res.status(HttpStatus.Created).send({
+        res.status(HttpStatus.CREATED).send({
           _id,
         });
       })
