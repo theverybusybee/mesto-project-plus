@@ -12,15 +12,14 @@ export const getUsers = (req: Request, res: Response, next: NextFunction) => {
 export const getUserById = (
   req: Request,
   res: Response,
-  err: Error,
   next: NextFunction
 ) => {
-  const userId = req.user._id;
+  const _id = req.params.userId;
 
-  User.findById(userId)
+  return User.findOne({ _id })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(`Нет пользователя с id: ${userId}`);
+        throw new NotFoundError(`Нет пользователя с id: ${_id}`);
       }
       res.send({ data: user });
     })
