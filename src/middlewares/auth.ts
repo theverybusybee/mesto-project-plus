@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { SECRET_KEY } from '../utils/constants/default-data';
 import { UnauthorizedError } from '../utils/errors';
-import { IError } from './centralize-error-handler';
 
 interface SessionRequest extends Request {
   user?: string | JwtPayload;
@@ -30,5 +29,5 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
 
   req.user = payload;
 
-  return next();
+  next();
 };

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import User from '../models/user';
 import { BadRequestError, NotFoundError } from '../utils/errors';
-import Error from 'next/error';
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   User.find({})
