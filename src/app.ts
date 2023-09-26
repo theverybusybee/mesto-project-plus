@@ -14,8 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(requestLogger);
-
-app.use(rootRouter);
+app.use('/api', rootRouter);
+app.use(express.static(rootRouter.join(__dirname, 'public')));
 
 app.use(errorLogger);
 app.use(errors());
