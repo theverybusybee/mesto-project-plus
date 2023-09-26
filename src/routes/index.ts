@@ -8,6 +8,12 @@ import auth from '../middlewares/auth';
 
 const rootRouter = require('express').Router();
 
+rootRouter.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 rootRouter.post('/signin', signInValidator, login);
 rootRouter.post('/signup', signUpValidator, createUser);
 
